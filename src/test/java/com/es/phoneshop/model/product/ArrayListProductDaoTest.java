@@ -11,7 +11,7 @@ public class ArrayListProductDaoTest
 
     @Before
     public void setup() {
-        productDao = ArrayListProductDao.getObject();
+        productDao = ArrayListProductDao.getInstance();
     }
 
     @Test

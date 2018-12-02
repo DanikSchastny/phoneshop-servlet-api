@@ -28,7 +28,7 @@ public class ArrayListProductDao implements ProductDao {
         products.add(new Product(13L, "simsxg75", "Siemens SXG75", new BigDecimal(150), usd, 40, "https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/manufacturer/Siemens/Siemens%20SXG75.jpg"));
     }
 
-    public static ArrayListProductDao getObject() {
+    public static ArrayListProductDao getInstance() {
         if (object == null) {
             synchronized (ArrayListProductDao.class) {
                 if (object == null) {
@@ -66,13 +66,8 @@ public class ArrayListProductDao implements ProductDao {
     public void delete(Long id) {
         boolean flagId = false;
         synchronized (this) {
-           //products.removeIf(x->x.getId().equals(id));
-            for (Product product : products) {
-                if (product.getId().equals(id)) {
-                    products.remove(product);
-                    flagId = true;
-                }
-            }
+           products.removeIf(x->x.getId().equals(id));
+           flagId = true;
         }
         if(!flagId){
             throw new RuntimeException("Product with id: " + id + " was not founded");
