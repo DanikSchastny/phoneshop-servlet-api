@@ -5,13 +5,29 @@ import com.es.phoneshop.model.product.Product;
 import com.es.phoneshop.model.product.ProductDao;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.math.BigDecimal;
 
 public class ProductLogic{
-    private static ProductDao product = ArrayListProductDao.getObject();
+    private static ProductLogic object;
+    private static ProductDao product = ArrayListProductDao.getInstance();
 
-    public static List<Product> findProducts(HttpServletRequest request){
+    private ProductLogic(){}
+
+    public static ProductLogic getInstance(){
+        if(object == null){
+            synchronized(ProductLogic.class){
+                if(object == null){
+                    object = new ProductLogic();
+                }
+            }
+        }
+        return object;
+    }
+
+    public List<Product> findProducts(HttpServletRequest request){
         List<Product> productList = product.findProducts();
         String searchLine = request.getParameter("searchLine");
         if (searchLine != null && !searchLine.isEmpty()) {
@@ -24,7 +40,7 @@ public class ProductLogic{
         return sortingByParam(sortingParameter, productList);
     }
 
-    private static List<Product> searchLine(String searchLine, List<Product> productList) {
+    private List<Product> searchLine(String searchLine, List<Product> productList) {
         String[] searchWords = searchLine.split("\\s+");
         productList = productList.stream().filter(x -> {
             for (String str : searchWords) {
@@ -50,12 +66,12 @@ public class ProductLogic{
         return productList;
     }
 
-    private static List<Product> sortingByParam(String sortingParameter, List<Product> productList) {
+    private List<Product> sortingByParam(String sortingParameter, List<Product> productList) {
         if (sortingParameter != null) {
             switch (sortingParameter) {
                 case "upDescription":
-                    return productList.stream().sorted((x, y) -> x.getDescription().
-                            compareTo(y.getDescription())).collect(Collectors.toList());
+               return productList.stream().sorted((x, y) -> x.getDescription()
+                       .compareTo(y.getDescription())).collect(Collectors.toList());
                 case "downDescription":
                     return productList.stream().sorted((x, y) -> y.getDescription().
                             compareTo(x.getDescription())).collect(Collectors.toList());
